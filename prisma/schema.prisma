@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  email         String          @unique
+  password      String?
+  role          String          @default("USER") // ADMIN or USER
+  projects      ProjectMember[]
+  activities    ActivityLog[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Project {
+  id            String          @id @default(cuid())
+  name          String
+  apiKey        String          @unique @default(uuid())
+  members       ProjectMember[]
+  fieldConfigs  FieldConfig[]
+  leads         Lead[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model ProjectMember {
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, projectId])
+}
+
+model FieldConfig {
+  id          String   @id @default(cuid())
+  projectId   String
+  name        String   // Display Name e.g. "Company Size"
+  internalKey String   // Machine readable e.g. "company_size"
+  type        String   // TEXT, TEXTAREA, CHECKBOX, SELECT, DATE, NUMBER
+  isRequired  Boolean  @default(false)
+  orderIndex  Int      @default(0)
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, internalKey])
+}
+
+model Lead {
+  id          String        @id @default(cuid())
+  projectId   String
+  status      String        @default("NEW")
+  dynamicData String        // Stored as JSON string due to SQLite limitations
+  deletedAt   DateTime?
+  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  activities  ActivityLog[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  leadId    String
+  userId    String?  // Can be null if system action or webhook
+  action    String
+  oldValue  String?  // JSON string
+  newValue  String?  // JSON string
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+}
