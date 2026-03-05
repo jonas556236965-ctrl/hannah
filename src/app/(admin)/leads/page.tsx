@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { statusLabel } from "@/lib/utils"
 
 export default async function LeadsPage() {
     const session = await auth()
@@ -81,7 +82,7 @@ export default async function LeadsPage() {
                                             <Badge variant="outline">{lead.project.name}</Badge>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge>{lead.status}</Badge>
+                                            <Badge>{statusLabel(lead.status)}</Badge>
                                         </TableCell>
                                         <TableCell className="font-medium">
                                             {mainName}

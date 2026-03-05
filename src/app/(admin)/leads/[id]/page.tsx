@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { updateLeadFields, updateLeadStatus, addLeadNote, logCall } from "@/app/actions/lead"
+import { statusLabel } from "@/lib/utils"
 
 export default async function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await auth()
@@ -57,7 +58,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-2xl font-bold tracking-tight">{mainName}</h1>
-                            <Badge variant="outline" className="text-xs uppercase">{lead.status}</Badge>
+                            <Badge variant="outline" className="text-xs uppercase">{statusLabel(lead.status)}</Badge>
                         </div>
                         <p className="text-muted-foreground text-sm flex items-center gap-2 mt-1">
                             Projekt: <span className="font-medium text-foreground">{lead.project.name}</span>
@@ -188,7 +189,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                                     if (activity.action === "STATUS_CHANGED") {
                                         badgeColor = "bg-blue-500"
                                         const val = JSON.parse(activity.newValue || "{}")
-                                        displayValue = `Neuer Status: ${val.status}`
+                                        displayValue = `Neuer Status: ${statusLabel(val.status)}`
                                     } else if (activity.action === "NOTE_ADDED") {
                                         badgeColor = "bg-green-500"
                                         const val = JSON.parse(activity.newValue || "{}")
