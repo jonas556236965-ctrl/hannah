@@ -61,6 +61,7 @@ model Lead {
   id          String        @id @default(cuid())
   projectId   String
   status      String        @default("NEW")
+  name        String?
   email       String?
   phone       String?
   notes       String?
