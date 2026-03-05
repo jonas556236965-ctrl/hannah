@@ -11,7 +11,8 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { updateLeadFields, updateLeadStatus, addLeadNote, logCall, updateContactFields } from "@/app/actions/lead"
 import { statusLabel, actionLabel } from "@/lib/utils"
-import { Mail, Phone as PhoneIcon, StickyNote } from "lucide-react"
+import { Mail, Phone as PhoneIcon, StickyNote, Loader2 } from "lucide-react"
+import { SubmitButton } from "@/components/ui/submit-button"
 
 export default async function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await auth()
@@ -196,7 +197,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                                 if (summary) await logCall(lead.id, summary)
                             }}>
                                 <Input name="summary" placeholder="Anruf Kurznotiz..." className="h-8 text-xs mb-2" required />
-                                <Button size="sm" variant="outline" className="w-full text-xs h-8"><Phone className="w-3 h-3 mr-1" />Anruf loggen</Button>
+                                <SubmitButton size="sm" variant="outline" className="w-full text-xs h-8"><Phone className="w-3 h-3 mr-1" />Anruf loggen</SubmitButton>
                             </form>
                             <form action={async (formData) => {
                                 "use server"
@@ -204,7 +205,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                                 if (note) await addLeadNote(lead.id, note)
                             }}>
                                 <Input name="note" placeholder="Notiztext..." className="h-8 text-xs mb-2" required />
-                                <Button size="sm" variant="outline" className="w-full text-xs h-8"><FilePenLine className="w-3 h-3 mr-1" />Notiz hinzufügen</Button>
+                                <SubmitButton size="sm" variant="outline" className="w-full text-xs h-8"><FilePenLine className="w-3 h-3 mr-1" />Notiz hinzufügen</SubmitButton>
                             </form>
                         </CardContent>
                     </Card>
