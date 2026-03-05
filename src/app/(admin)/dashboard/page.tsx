@@ -7,13 +7,14 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { statusLabel } from "@/lib/utils"
+import { Users, Trophy, Percent, LayoutDashboard } from "lucide-react"
 
 const STATUS_CONFIG = [
-    { value: "NEW", label: "Neu", color: "bg-slate-500", light: "bg-slate-50 border-slate-200 dark:bg-slate-900/30 dark:border-slate-700", text: "text-slate-700 dark:text-slate-300" },
-    { value: "CONTACTED", label: "Kontaktiert", color: "bg-blue-500", light: "bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:border-blue-700", text: "text-blue-700 dark:text-blue-300" },
-    { value: "QUALIFIED", label: "Qualifiziert", color: "bg-yellow-500", light: "bg-yellow-50 border-yellow-200 dark:bg-yellow-900/30 dark:border-yellow-700", text: "text-yellow-700 dark:text-yellow-300" },
-    { value: "WON", label: "Gewonnen", color: "bg-green-500", light: "bg-green-50 border-green-200 dark:bg-green-900/30 dark:border-green-700", text: "text-green-700 dark:text-green-300" },
-    { value: "LOST", label: "Verloren", color: "bg-red-500", light: "bg-red-50 border-red-200 dark:bg-red-900/30 dark:border-red-700", text: "text-red-700 dark:text-red-300" },
+    { value: "NEW", label: "Neu", color: "bg-slate-400", light: "bg-slate-100", text: "text-slate-800" },
+    { value: "CONTACTED", label: "Kontaktiert", color: "bg-blue-400", light: "bg-blue-50", text: "text-blue-900" },
+    { value: "QUALIFIED", label: "Qualifiziert", color: "bg-yellow-400", light: "bg-yellow-50", text: "text-yellow-900" },
+    { value: "WON", label: "Gewonnen", color: "bg-green-400", light: "bg-green-50", text: "text-green-900" },
+    { value: "LOST", label: "Verloren", color: "bg-red-400", light: "bg-red-50", text: "text-red-900" },
 ]
 
 export default async function DashboardPage({
@@ -55,40 +56,42 @@ export default async function DashboardPage({
             </div>
 
             {/* Summary Row */}
-            <div className="grid grid-cols-3 gap-4">
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="text-4xl font-bold">{totalLeads}</div>
-                        <p className="text-sm text-muted-foreground mt-1">Leads gesamt</p>
+            <div className="grid grid-cols-3 gap-6">
+                <Card className="shadow-lg hover:shadow-xl transition-shadow border-none">
+                    <CardContent className="pt-6 relative overflow-hidden">
+                        <Users className="absolute right-4 top-4 w-12 h-12 text-primary opacity-10" />
+                        <div className="text-4xl md:text-5xl font-bold text-gray-900">{totalLeads}</div>
+                        <p className="text-sm font-medium text-gray-500 mt-2">Leads gesamt</p>
                     </CardContent>
                 </Card>
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="text-4xl font-bold text-green-600">{wonLeads}</div>
-                        <p className="text-sm text-muted-foreground mt-1">Gewonnen</p>
+                <Card className="shadow-lg hover:shadow-xl transition-shadow border-none">
+                    <CardContent className="pt-6 relative overflow-hidden">
+                        <Trophy className="absolute right-4 top-4 w-12 h-12 text-green-500 opacity-10" />
+                        <div className="text-4xl md:text-5xl font-bold text-gray-900">{wonLeads}</div>
+                        <p className="text-sm font-medium text-gray-500 mt-2">Gewonnen</p>
                     </CardContent>
                 </Card>
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="text-4xl font-bold text-blue-600">{winRate}%</div>
-                        <p className="text-sm text-muted-foreground mt-1">Abschlussquote</p>
+                <Card className="shadow-lg hover:shadow-xl transition-shadow border-none">
+                    <CardContent className="pt-6 relative overflow-hidden">
+                        <Percent className="absolute right-4 top-4 w-12 h-12 text-blue-500 opacity-10" />
+                        <div className="text-4xl md:text-5xl font-bold text-gray-900">{winRate}<span className="text-3xl">%</span></div>
+                        <p className="text-sm font-medium text-gray-500 mt-2">Abschlussquote</p>
                     </CardContent>
                 </Card>
             </div>
 
             {/* Status Cards – clickable filter */}
             <div>
-                <h2 className="text-lg font-semibold mb-3">Nach Status filtern</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                <h2 className="text-lg font-semibold mb-3 text-gray-800">Nach Status filtern</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
                     {statusCounts.map(s => (
                         <Link
                             key={s.value}
                             href={filterStatus === s.value ? "/dashboard" : `/dashboard?status=${s.value}`}
                         >
-                            <div className={`rounded-xl border p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-md ${s.light} ${filterStatus === s.value ? "ring-2 ring-offset-2 ring-current shadow-md" : ""}`}>
+                            <div className={`rounded-xl p-5 cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg ${s.light} ${filterStatus === s.value ? "ring-2 ring-primary ring-offset-2 shadow-lg" : "shadow-sm border border-transparent"}`}>
                                 <div className={`text-3xl font-bold ${s.text}`}>{s.count}</div>
-                                <div className={`text-sm font-medium mt-1 ${s.text}`}>{s.label}</div>
-                                <div className={`mt-2 h-1 rounded-full ${s.color} opacity-60`} />
+                                <div className={`text-sm font-medium mt-1 ${s.text} opacity-80`}>{s.label}</div>
                             </div>
                         </Link>
                     ))}
@@ -96,18 +99,18 @@ export default async function DashboardPage({
             </div>
 
             {/* Lead Table */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+            <Card className="shadow-xl border-none">
+                <CardHeader className="bg-white/50 border-b border-gray-100">
+                    <CardTitle className="flex items-center gap-2 text-gray-800">
                         {filterStatus ? (
                             <>
                                 Leads mit Status: <span className={`font-bold`}>{statusLabel(filterStatus)}</span>
-                                <Link href="/dashboard" className="ml-auto text-xs text-muted-foreground hover:text-foreground underline">
+                                <Link href="/dashboard" className="ml-auto text-xs text-primary hover:text-primary/80 underline font-medium">
                                     Filter zurücksetzen
                                 </Link>
                             </>
                         ) : "Alle Leads"}
-                        <span className="text-sm font-normal text-muted-foreground ml-auto">
+                        <span className="text-sm font-normal text-gray-500 ml-auto bg-gray-100 px-3 py-1 rounded-full">
                             {filteredLeads.length} {filteredLeads.length === 1 ? "Lead" : "Leads"}
                         </span>
                     </CardTitle>
@@ -115,17 +118,17 @@ export default async function DashboardPage({
                 <CardContent className="p-0">
                     <Table>
                         <TableHeader>
-                            <TableRow>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Projekt</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Eingegangen am</TableHead>
+                            <TableRow className="hover:bg-transparent">
+                                <TableHead className="text-gray-500 font-medium">Name</TableHead>
+                                <TableHead className="text-gray-500 font-medium">Projekt</TableHead>
+                                <TableHead className="text-gray-500 font-medium">Status</TableHead>
+                                <TableHead className="text-gray-500 font-medium whitespace-nowrap">Eingegangen am</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {filteredLeads.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                                    <TableCell colSpan={4} className="text-center text-gray-500 py-12">
                                         Keine Leads für diesen Status.
                                     </TableCell>
                                 </TableRow>
@@ -136,21 +139,21 @@ export default async function DashboardPage({
                                 const name = parsed["name"] || parsed["company"] || "Unbekannt"
                                 const cfg = STATUS_CONFIG.find(s => s.value === lead.status)
                                 return (
-                                    <TableRow key={lead.id}>
-                                        <TableCell className="font-medium">
-                                            <Link href={`/leads/${lead.id}`} className="hover:underline">
+                                    <TableRow key={lead.id} className="cursor-pointer hover:bg-gray-50 group transition-colors">
+                                        <TableCell className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
+                                            <Link href={`/leads/${lead.id}`} className="block">
                                                 {name}
                                             </Link>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge variant="outline">{lead.project.name}</Badge>
+                                            <Badge variant="secondary" className="bg-gray-100 text-gray-600 hover:bg-gray-200 shadow-none font-medium">{lead.project.name}</Badge>
                                         </TableCell>
                                         <TableCell>
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${cfg?.light ?? ""} ${cfg?.text ?? ""} border`}>
+                                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${cfg?.light ?? ""} ${cfg?.text ?? ""} border-none shadow-sm`}>
                                                 {statusLabel(lead.status)}
                                             </span>
                                         </TableCell>
-                                        <TableCell className="text-sm text-muted-foreground">
+                                        <TableCell className="text-sm font-medium text-gray-500">
                                             {new Date(lead.createdAt).toLocaleDateString("de-DE")}
                                         </TableCell>
                                     </TableRow>

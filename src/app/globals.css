@@ -53,12 +53,11 @@
 */
 
 :root {
-  --radius: 0.75rem;
+  --radius: 1rem;
 
-  --background: oklch(1 0 0);
-  /* pure white */
+  --background: oklch(0.98 0 0);
+  /* #fafafa very light subtle warm gray */
   --foreground: oklch(0.2 0.01 300);
-  /* near-black with warm tint */
 
   --card: oklch(1 0 0);
   /* pure white cards */
@@ -83,7 +82,8 @@
 
   --destructive: oklch(0.577 0.245 27.325);
 
-  --border: oklch(0.9 0.01 355);
+  --border: oklch(0.95 0 0 / 50%);
+  /* almost invisible border, relying on shadow */
   --input: oklch(0.92 0.008 355);
   --ring: oklch(0.52 0.24 355);
 
