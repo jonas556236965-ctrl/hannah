@@ -55,10 +55,13 @@
 :root {
   --radius: 0.75rem;
 
-  --background: oklch(0.985 0.002 355);     /* very light warm white */
-  --foreground: oklch(0.2 0.01 300);         /* near-black with warm tint */
+  --background: oklch(1 0 0);
+  /* pure white */
+  --foreground: oklch(0.2 0.01 300);
+  /* near-black with warm tint */
 
-  --card: oklch(1 0 0);                      /* pure white cards */
+  --card: oklch(1 0 0);
+  /* pure white cards */
   --card-foreground: oklch(0.2 0.01 300);
 
   --popover: oklch(1 0 0);
@@ -68,7 +71,8 @@
   --primary: oklch(0.52 0.24 355);
   --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.96 0.01 355);         /* very light pink tint */
+  --secondary: oklch(0.96 0.01 355);
+  /* very light pink tint */
   --secondary-foreground: oklch(0.52 0.24 355);
 
   --muted: oklch(0.96 0.005 355);
@@ -139,6 +143,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
