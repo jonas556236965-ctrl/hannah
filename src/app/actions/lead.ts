@@ -107,3 +107,40 @@ export async function updateLeadFields(leadId: string, formData: FormData) {
 
     revalidatePath(`/leads/${leadId}`)
 }
+
+export async function updateContactFields(leadId: string, formData: FormData) {
+    const { lead, user } = await verifyLeadAccess(leadId)
+
+    const newEmail = (formData.get("email") as string)?.trim() || null
+    const newPhone = (formData.get("phone") as string)?.trim() || null
+    const newNotes = (formData.get("notes") as string)?.trim() || null
+
+    // Build change log entries
+    const changes: string[] = []
+    if (newEmail !== lead.email) changes.push(`E-Mail: ${lead.email ?? "–"} → ${newEmail ?? "–"}`)
+    if (newPhone !== lead.phone) changes.push(`Telefon: ${lead.phone ?? "–"} → ${newPhone ?? "–"}`)
+    if (newNotes !== lead.notes) changes.push(`Notizen aktualisiert`)
+
+    if (changes.length === 0) {
+        revalidatePath(`/leads/${leadId}`)
+        return
+    }
+
+    await prisma.lead.update({
+        where: { id: leadId },
+        data: { email: newEmail, phone: newPhone, notes: newNotes }
+    })
+
+    await logLeadAction({
+        leadId,
+        userId: user.id,
+        action: "CONTACT_UPDATED",
+        oldValue: { email: lead.email, phone: lead.phone },
+        newValue: { email: newEmail, phone: newPhone, changes }
+    })
+
+    revalidatePath(`/leads/${leadId}`)
+    revalidatePath("/leads")
+    revalidatePath("/dashboard")
+}
+

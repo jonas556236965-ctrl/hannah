@@ -61,6 +61,9 @@ model Lead {
   id          String        @id @default(cuid())
   projectId   String
   status      String        @default("NEW")
+  email       String?
+  phone       String?
+  notes       String?
   dynamicData String        // Stored as JSON string due to SQLite limitations
   deletedAt   DateTime?
   project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)

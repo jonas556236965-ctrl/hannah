@@ -9,8 +9,9 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { updateLeadFields, updateLeadStatus, addLeadNote, logCall } from "@/app/actions/lead"
+import { updateLeadFields, updateLeadStatus, addLeadNote, logCall, updateContactFields } from "@/app/actions/lead"
 import { statusLabel } from "@/lib/utils"
+import { Mail, Phone as PhoneIcon, StickyNote } from "lucide-react"
 
 export default async function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await auth()
@@ -147,8 +148,40 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                     </CardContent>
                 </Card>
 
+                {/* CONTACT FIELDS: Email, Phone, Notes */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-lg">Kontakt &amp; Notizen</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form action={updateContactFields.bind(null, lead.id)} className="space-y-4">
+                            <div className="space-y-1">
+                                <Label htmlFor="email" className="font-semibold">E-Mail Adresse</Label>
+                                <Input id="email" name="email" type="email" placeholder="name@beispiel.de" defaultValue={lead.email ?? ""} />
+                            </div>
+                            <div className="space-y-1">
+                                <Label htmlFor="phone" className="font-semibold">Telefonnummer</Label>
+                                <Input id="phone" name="phone" type="tel" placeholder="+49 123 456789" defaultValue={lead.phone ?? ""} />
+                            </div>
+                            <div className="space-y-1">
+                                <Label htmlFor="notes" className="font-semibold">Interne Notizen</Label>
+                                <textarea
+                                    id="notes"
+                                    name="notes"
+                                    defaultValue={lead.notes ?? ""}
+                                    placeholder="Notizen für das Team..."
+                                    className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                />
+                            </div>
+                            <Button type="submit" variant="secondary" className="w-full">
+                                Kontaktdaten speichern
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
 
                 {/* RIGHT COLUMN: Activity Feed */}
+
                 <div className="flex flex-col gap-6">
                     {/* Action Boxes */}
                     <Card>
@@ -198,6 +231,10 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                                         badgeColor = "bg-purple-500"
                                         const val = JSON.parse(activity.newValue || "{}")
                                         displayValue = `Anruf: ${val.summary}`
+                                    } else if (activity.action === "CONTACT_UPDATED") {
+                                        badgeColor = "bg-teal-500"
+                                        const val = JSON.parse(activity.newValue || "{}")
+                                        displayValue = (val.changes as string[])?.join(" · ") || "Kontaktdaten aktualisiert"
                                     } else if (activity.action === "FIELDS_UPDATED") {
                                         badgeColor = "bg-orange-500"
                                         displayValue = "Formulardaten aktualisiert"
