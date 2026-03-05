@@ -27,8 +27,8 @@ export function Sidebar({ userRole }: SidebarProps) {
 
     return (
         <aside className="w-64 border-r bg-card flex flex-col">
-            <div className="h-16 flex items-center px-6 border-b">
-                <span className="font-bold text-lg tracking-tight">Hannah CRM</span>
+            <div className="h-24 flex justify-center items-center px-6 border-b">
+                <img src="/logo.png" alt="Hannah Noethig Logo" className="max-h-16 w-auto object-contain" />
             </div>
             <nav className="flex-1 overflow-y-auto py-4">
                 <ul className="space-y-1 px-3">
