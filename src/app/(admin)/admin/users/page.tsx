@@ -46,6 +46,14 @@ export default async function UsersPage() {
                             <Input name="name" placeholder="Name" required />
                             <Input type="email" name="email" placeholder="E-Mail" required />
                             <Input type="password" name="password" placeholder="Passwort" required />
+                            <select
+                                name="role"
+                                defaultValue="USER"
+                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            >
+                                <option value="USER">👤 Mitarbeiter (User)</option>
+                                <option value="ADMIN">🔑 Administrator (Admin)</option>
+                            </select>
                             <Button type="submit">Erstellen</Button>
                         </form>
                     </CardContent>
