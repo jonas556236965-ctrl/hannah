@@ -17,3 +17,17 @@ const STATUS_LABELS: Record<string, string> = {
 export function statusLabel(status: string): string {
   return STATUS_LABELS[status] ?? status
 }
+
+const ACTION_LABELS: Record<string, string> = {
+  STATUS_CHANGED: "Status geändert",
+  NOTE_ADDED: "Notiz hinzugefügt",
+  CALL_LOGGED: "Anruf geloggt",
+  CONTACT_UPDATED: "Kontakt aktualisiert",
+  FIELDS_UPDATED: "Daten aktualisiert",
+  LEAD_CREATED_API: "Lead erstellt (API)",
+  LEAD_CREATED: "Lead erstellt",
+}
+
+export function actionLabel(action: string): string {
+  return ACTION_LABELS[action] ?? action.replace(/_/g, " ")
+}

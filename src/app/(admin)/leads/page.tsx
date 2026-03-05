@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { statusLabel } from "@/lib/utils"
+import { statusLabel, actionLabel } from "@/lib/utils"
 
 export default async function LeadsPage() {
     const session = await auth()
@@ -90,7 +90,7 @@ export default async function LeadsPage() {
                                         </TableCell>
                                         <TableCell className="text-sm text-muted-foreground">
                                             {lead.activities.length > 0 ? (
-                                                <span>{lead.activities[0].action} ({new Date(lead.activities[0].createdAt).toLocaleDateString()})</span>
+                                                <span>{actionLabel(lead.activities[0].action)} ({new Date(lead.activities[0].createdAt).toLocaleDateString()})</span>
                                             ) : (
                                                 "Neu eingegangen"
                                             )}

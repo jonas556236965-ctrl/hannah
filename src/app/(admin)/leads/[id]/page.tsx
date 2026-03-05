@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { updateLeadFields, updateLeadStatus, addLeadNote, logCall, updateContactFields } from "@/app/actions/lead"
-import { statusLabel } from "@/lib/utils"
+import { statusLabel, actionLabel } from "@/lib/utils"
 import { Mail, Phone as PhoneIcon, StickyNote } from "lucide-react"
 
 export default async function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -253,7 +253,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                                             </div>
                                             <div className="text-sm">
                                                 <div className="flex gap-2 items-baseline">
-                                                    <span className="font-medium">{activity.action.replace(/_/g, " ")}</span>
+                                                    <span className="font-medium">{actionLabel(activity.action)}</span>
                                                     <span className="text-xs text-muted-foreground">{new Date(activity.createdAt).toLocaleString()}</span>
                                                 </div>
                                                 <p className="text-muted-foreground mt-1">{displayValue}</p>
