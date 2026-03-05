@@ -94,13 +94,13 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
 
                 {/* LEFT COLUMN: Stammdaten + Kontakt */}
                 <div className="flex flex-col gap-6">
-                    <Card className="sticky top-6">
-                        <CardHeader>
-                            <CardTitle className="text-lg flex justify-between items-center">
+                    <Card className="sticky top-6 shadow-xl border-none">
+                        <CardHeader className="bg-white/50 border-b border-gray-100 pb-4">
+                            <CardTitle className="text-lg flex justify-between items-center text-gray-800">
                                 <span>Stammdaten</span>
                             </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="pt-6">
                             <form action={updateLeadFields.bind(null, lead.id)} className="space-y-4">
                                 {lead.project.fieldConfigs.map(field => {
                                     const val = dynamicData[field.internalKey] || ""
@@ -178,9 +178,9 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
 
                 <div className="flex flex-col gap-6">
                     {/* Action Boxes */}
-                    <Card>
-                        <CardHeader className="pl-4 pb-2 pt-4"><CardTitle className="text-sm">Schnellaktionen</CardTitle></CardHeader>
-                        <CardContent className="grid grid-cols-2 gap-2 p-4 pt-0">
+                    <Card className="shadow-lg border-none">
+                        <CardHeader className="pl-6 pb-3 pt-5 border-b border-gray-100 bg-white/50"><CardTitle className="text-sm text-gray-800">Schnellaktionen</CardTitle></CardHeader>
+                        <CardContent className="grid grid-cols-2 gap-3 p-6">
                             <form action={async (formData) => {
                                 "use server"
                                 const summary = formData.get("summary") as string
@@ -200,13 +200,13 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                         </CardContent>
                     </Card>
 
-                    <Card className="flex-1">
-                        <CardHeader>
-                            <CardTitle className="text-lg flex items-center gap-2">
+                    <Card className="flex-1 shadow-xl border-none">
+                        <CardHeader className="bg-white/50 border-b border-gray-100 pb-4">
+                            <CardTitle className="text-lg flex items-center gap-2 text-gray-800">
                                 Timeline & Aktivität
                             </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="pt-6">
                             <div className="relative border-l pl-4 ml-2 space-y-6">
                                 {lead.activities.map(activity => {
                                     let badgeColor = "bg-primary"

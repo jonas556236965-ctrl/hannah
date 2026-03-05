@@ -47,23 +47,23 @@ export default async function LeadsPage() {
 
     return (
         <div className="space-y-6 flex flex-col h-full">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold tracking-tight">Leads Übersicht</h1>
+            <div className="flex justify-between items-center mb-2">
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900">Leads Übersicht</h1>
             </div>
 
-            <Card className="flex-1 overflow-auto">
-                <CardHeader>
-                    <CardTitle>Deine Leads</CardTitle>
+            <Card className="flex-1 overflow-auto shadow-xl border-none bg-white">
+                <CardHeader className="bg-white/50 border-b border-gray-100 pb-4">
+                    <CardTitle className="text-gray-800">Deine Leads</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0">
                     <Table>
                         <TableHeader>
-                            <TableRow>
-                                <TableHead>Projekt</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Name / Firma</TableHead>
-                                <TableHead>Letzte Aktivität</TableHead>
-                                <TableHead className="text-right">Aktionen</TableHead>
+                            <TableRow className="hover:bg-transparent">
+                                <TableHead className="text-gray-500 font-medium">Projekt</TableHead>
+                                <TableHead className="text-gray-500 font-medium">Status</TableHead>
+                                <TableHead className="text-gray-500 font-medium">Name / Firma</TableHead>
+                                <TableHead className="text-gray-500 font-medium">Letzte Aktivität</TableHead>
+                                <TableHead className="text-right text-gray-500 font-medium">Aktionen</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -77,18 +77,18 @@ export default async function LeadsPage() {
                                 const mainName = parsedData["name"] || parsedData["company"] || "Unbekannt"
 
                                 return (
-                                    <TableRow key={lead.id} className={followUpDue ? "bg-red-50 dark:bg-red-950/20" : ""}>
+                                    <TableRow key={lead.id} className={`group hover:bg-gray-50 transition-colors ${followUpDue ? "bg-red-50/50" : ""}`}>
                                         <TableCell>
-                                            <Badge variant="outline">{lead.project.name}</Badge>
+                                            <Badge variant="secondary" className="bg-gray-100 text-gray-600 hover:bg-gray-200 shadow-none font-medium text-xs">{lead.project.name}</Badge>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge>{statusLabel(lead.status)}</Badge>
+                                            <Badge variant="outline" className="shadow-sm border-gray-200 text-gray-700 bg-white">{statusLabel(lead.status)}</Badge>
                                         </TableCell>
-                                        <TableCell className="font-medium">
+                                        <TableCell className="font-semibold text-gray-900">
                                             {mainName}
-                                            {followUpDue && <Badge variant="destructive" className="ml-2 text-[10px] h-4">Follow-Up fällig</Badge>}
+                                            {followUpDue && <Badge variant="destructive" className="ml-2 text-[10px] h-4 shadow-sm border-none">Follow-Up fällig</Badge>}
                                         </TableCell>
-                                        <TableCell className="text-sm text-muted-foreground">
+                                        <TableCell className="text-sm font-medium text-gray-500">
                                             {lead.activities.length > 0 ? (
                                                 <span>{actionLabel(lead.activities[0].action)} ({new Date(lead.activities[0].createdAt).toLocaleDateString()})</span>
                                             ) : (
@@ -97,7 +97,7 @@ export default async function LeadsPage() {
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <Link href={`/leads/${lead.id}`}>
-                                                <Button variant="secondary" size="sm">Akte öffnen</Button>
+                                                <Button variant="secondary" size="sm" className="shadow-sm hover:shadow transition-all bg-white border border-gray-200 text-gray-700 hover:bg-gray-50">Akte öffnen</Button>
                                             </Link>
                                         </TableCell>
                                     </TableRow>
