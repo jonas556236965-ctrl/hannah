@@ -102,12 +102,36 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                         </CardHeader>
                         <CardContent className="pt-6">
                             <form action={updateLeadFields.bind(null, lead.id)} className="space-y-4">
+                                <div className="space-y-4 pb-6 mb-6 border-b border-gray-100">
+                                    <h3 className="font-semibold text-lg text-gray-900">Kontakt & Interne Notizen</h3>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="email" className="font-semibold text-gray-700">E-Mail Adresse</Label>
+                                        <Input id="email" name="email" type="email" placeholder="name@beispiel.de" defaultValue={lead.email ?? ""} className="bg-gray-50/50" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="phone" className="font-semibold text-gray-700">Telefonnummer</Label>
+                                        <Input id="phone" name="phone" type="tel" placeholder="+49 123 456789" defaultValue={lead.phone ?? ""} className="bg-gray-50/50" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="notes" className="font-semibold text-gray-700">Interne Notizen</Label>
+                                        <textarea
+                                            id="notes"
+                                            name="notes"
+                                            defaultValue={lead.notes ?? ""}
+                                            placeholder="Notizen für das Team..."
+                                            className="flex min-h-[100px] w-full rounded-md border border-input bg-gray-50/50 px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                        />
+                                    </div>
+                                </div>
+
+                                <h3 className="font-semibold text-lg text-gray-900 mt-6 mb-4">Projektdaten</h3>
+
                                 {lead.project.fieldConfigs.map(field => {
                                     const val = dynamicData[field.internalKey] || ""
                                     return (
                                         <div key={field.id} className="space-y-1">
-                                            <Label htmlFor={field.internalKey} className="font-semibold">
-                                                {field.name} {field.isRequired && <span className="text-destructive">*</span>}
+                                            <Label htmlFor={field.internalKey} className="font-semibold text-gray-700">
+                                                {field.name} {field.isRequired && <span className="text-primary">*</span>}
                                             </Label>
                                             {field.type === "TEXTAREA" ? (
                                                 <textarea
@@ -115,7 +139,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                                                     name={field.internalKey}
                                                     required={field.isRequired}
                                                     defaultValue={val}
-                                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-white px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                                                 />
                                             ) : field.type === "CHECKBOX" ? (
                                                 <div className="flex items-center space-x-2 pt-1 pb-2">
@@ -135,33 +159,14 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                                                     type={field.type === "DATE" ? "date" : field.type === "NUMBER" ? "number" : "text"}
                                                     required={field.isRequired}
                                                     defaultValue={val}
+                                                    className="bg-white"
                                                 />
                                             )}
                                         </div>
                                     )
                                 })}
 
-                                <div className="space-y-4 pt-6 mt-6 border-t">
-                                    <h3 className="font-semibold text-lg text-foreground">Kontakt & Interne Notizen</h3>
-                                    <div className="space-y-1">
-                                        <Label htmlFor="email" className="font-semibold">E-Mail Adresse</Label>
-                                        <Input id="email" name="email" type="email" placeholder="name@beispiel.de" defaultValue={lead.email ?? ""} />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <Label htmlFor="phone" className="font-semibold">Telefonnummer</Label>
-                                        <Input id="phone" name="phone" type="tel" placeholder="+49 123 456789" defaultValue={lead.phone ?? ""} />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <Label htmlFor="notes" className="font-semibold">Interne Notizen</Label>
-                                        <textarea
-                                            id="notes"
-                                            name="notes"
-                                            defaultValue={lead.notes ?? ""}
-                                            placeholder="Notizen für das Team..."
-                                            className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                                        />
-                                    </div>
-                                </div>
+                                {/* Moved to top */}
 
                                 <div className="pt-6 mt-6 border-t">
                                     <SubmitButton className="w-full">
