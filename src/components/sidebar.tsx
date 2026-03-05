@@ -15,13 +15,13 @@ export function Sidebar({ userRole }: SidebarProps) {
     const navItems = [
         { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
         { name: "Leads", href: "/leads", icon: FileBox },
+        { name: "Settings", href: "/admin/settings", icon: Settings },
     ]
 
     if (userRole === "ADMIN") {
-        navItems.push(
+        navItems.splice(2, 0,
             { name: "Projects", href: "/admin/projects", icon: FolderKanban },
             { name: "Users", href: "/admin/users", icon: Users },
-            { name: "Settings", href: "/admin/settings", icon: Settings }
         )
     }
 
