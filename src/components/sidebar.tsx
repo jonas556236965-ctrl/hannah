@@ -13,7 +13,7 @@ export function Sidebar({ userRole }: SidebarProps) {
     const pathname = usePathname()
 
     const navItems = [
-        { name: "Dashboard", href: "/", icon: LayoutDashboard },
+        { name: "Dashboard", href: "/leads", icon: LayoutDashboard },
         { name: "Leads", href: "/leads", icon: FileBox },
     ]
 
