@@ -91,96 +91,99 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
 
             <div className="grid grid-cols-1 md:grid-cols-[1fr_400px] gap-6 flex-1 items-start">
 
-                {/* LEFT COLUMN: Stammdaten & FieldConfigs */}
-                <Card className="sticky top-6">
-                    <CardHeader>
-                        <CardTitle className="text-lg flex justify-between items-center">
-                            <span>Stammdaten</span>
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <form action={updateLeadFields.bind(null, lead.id)} className="space-y-4">
-                            {lead.project.fieldConfigs.map(field => {
-                                const val = dynamicData[field.internalKey] || ""
-                                return (
-                                    <div key={field.id} className="space-y-1">
-                                        <Label htmlFor={field.internalKey} className="font-semibold">
-                                            {field.name} {field.isRequired && <span className="text-destructive">*</span>}
-                                        </Label>
-                                        {field.type === "TEXTAREA" ? (
-                                            <textarea
-                                                id={field.internalKey}
-                                                name={field.internalKey}
-                                                required={field.isRequired}
-                                                defaultValue={val}
-                                                className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                                            />
-                                        ) : field.type === "CHECKBOX" ? (
-                                            <div className="flex items-center space-x-2 pt-1 pb-2">
-                                                <input
-                                                    type="checkbox"
+                {/* LEFT COLUMN: Stammdaten + Kontakt */}
+                <div className="flex flex-col gap-6">
+                    <Card className="sticky top-6">
+                        <CardHeader>
+                            <CardTitle className="text-lg flex justify-between items-center">
+                                <span>Stammdaten</span>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <form action={updateLeadFields.bind(null, lead.id)} className="space-y-4">
+                                {lead.project.fieldConfigs.map(field => {
+                                    const val = dynamicData[field.internalKey] || ""
+                                    return (
+                                        <div key={field.id} className="space-y-1">
+                                            <Label htmlFor={field.internalKey} className="font-semibold">
+                                                {field.name} {field.isRequired && <span className="text-destructive">*</span>}
+                                            </Label>
+                                            {field.type === "TEXTAREA" ? (
+                                                <textarea
                                                     id={field.internalKey}
                                                     name={field.internalKey}
-                                                    defaultChecked={val === "on" || val === true || val === "true"}
-                                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                                    required={field.isRequired}
+                                                    defaultValue={val}
+                                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                                                 />
-                                                <span className="text-sm">Ja</span>
-                                            </div>
-                                        ) : (
-                                            <Input
-                                                id={field.internalKey}
-                                                name={field.internalKey}
-                                                type={field.type === "DATE" ? "date" : field.type === "NUMBER" ? "number" : "text"}
-                                                required={field.isRequired}
-                                                defaultValue={val}
-                                            />
-                                        )}
-                                    </div>
-                                )
-                            })}
+                                            ) : field.type === "CHECKBOX" ? (
+                                                <div className="flex items-center space-x-2 pt-1 pb-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        id={field.internalKey}
+                                                        name={field.internalKey}
+                                                        defaultChecked={val === "on" || val === true || val === "true"}
+                                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                                    />
+                                                    <span className="text-sm">Ja</span>
+                                                </div>
+                                            ) : (
+                                                <Input
+                                                    id={field.internalKey}
+                                                    name={field.internalKey}
+                                                    type={field.type === "DATE" ? "date" : field.type === "NUMBER" ? "number" : "text"}
+                                                    required={field.isRequired}
+                                                    defaultValue={val}
+                                                />
+                                            )}
+                                        </div>
+                                    )
+                                })}
 
-                            <div className="pt-4 border-t">
-                                <Button type="submit" className="w-full">
-                                    <FilePenLine className="w-4 h-4 mr-2" /> Daten Speichern
+                                <div className="pt-4 border-t">
+                                    <Button type="submit" className="w-full">
+                                        <FilePenLine className="w-4 h-4 mr-2" /> Daten Speichern
+                                    </Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
+
+                    {/* CONTACT FIELDS: Email, Phone, Notes */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">Kontakt &amp; Notizen</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <form action={updateContactFields.bind(null, lead.id)} className="space-y-4">
+                                <div className="space-y-1">
+                                    <Label htmlFor="email" className="font-semibold">E-Mail Adresse</Label>
+                                    <Input id="email" name="email" type="email" placeholder="name@beispiel.de" defaultValue={lead.email ?? ""} />
+                                </div>
+                                <div className="space-y-1">
+                                    <Label htmlFor="phone" className="font-semibold">Telefonnummer</Label>
+                                    <Input id="phone" name="phone" type="tel" placeholder="+49 123 456789" defaultValue={lead.phone ?? ""} />
+                                </div>
+                                <div className="space-y-1">
+                                    <Label htmlFor="notes" className="font-semibold">Interne Notizen</Label>
+                                    <textarea
+                                        id="notes"
+                                        name="notes"
+                                        defaultValue={lead.notes ?? ""}
+                                        placeholder="Notizen für das Team..."
+                                        className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                    />
+                                </div>
+                                <Button type="submit" variant="secondary" className="w-full">
+                                    Kontaktdaten speichern
                                 </Button>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card>
-
-                {/* CONTACT FIELDS: Email, Phone, Notes */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">Kontakt &amp; Notizen</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <form action={updateContactFields.bind(null, lead.id)} className="space-y-4">
-                            <div className="space-y-1">
-                                <Label htmlFor="email" className="font-semibold">E-Mail Adresse</Label>
-                                <Input id="email" name="email" type="email" placeholder="name@beispiel.de" defaultValue={lead.email ?? ""} />
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="phone" className="font-semibold">Telefonnummer</Label>
-                                <Input id="phone" name="phone" type="tel" placeholder="+49 123 456789" defaultValue={lead.phone ?? ""} />
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="notes" className="font-semibold">Interne Notizen</Label>
-                                <textarea
-                                    id="notes"
-                                    name="notes"
-                                    defaultValue={lead.notes ?? ""}
-                                    placeholder="Notizen für das Team..."
-                                    className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                                />
-                            </div>
-                            <Button type="submit" variant="secondary" className="w-full">
-                                Kontaktdaten speichern
-                            </Button>
-                        </form>
-                    </CardContent>
-                </Card>
+                            </form>
+                        </CardContent>
+                    </Card>
+                </div>
 
                 {/* RIGHT COLUMN: Activity Feed */}
+
 
                 <div className="flex flex-col gap-6">
                     {/* Action Boxes */}
