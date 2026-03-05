@@ -19,14 +19,24 @@ export async function POST(req: NextRequest) {
         }
 
         const payload = await req.json()
-        // dynamic_data should contain the fields mapped in Lead
-        const dynamicDataStr = JSON.stringify(payload)
+
+        // Extract dedicated fields (support both top-level and nested under "data")
+        const src = payload.data ?? payload
+        const name = (src.name ?? src.Name ?? null)?.toString().trim() || null
+        const email = (src.email ?? src.Email ?? src.e_mail ?? null)?.toString().trim() || null
+        const phone = (src.phone ?? src.Phone ?? src.telefon ?? src.Telefon ?? null)?.toString().trim() || null
+
+        // Store everything in dynamicData (including name/email/phone so they appear in field views too)
+        const dynamicDataStr = JSON.stringify(src)
 
         // Create Lead
         const lead = await prisma.lead.create({
             data: {
                 projectId: project.id,
-                status: "NEW", // The default status for incoming API leads
+                status: "NEW",
+                name,
+                email,
+                phone,
                 dynamicData: dynamicDataStr,
             },
         })
@@ -35,12 +45,13 @@ export async function POST(req: NextRequest) {
         await logLeadAction({
             leadId: lead.id,
             action: "LEAD_CREATED_API",
-            newValue: payload,
+            newValue: { ...src, _name: name, _email: email, _phone: phone },
         })
 
-        return NextResponse.json({ lead_id: lead.id }, { status: 201 })
+        return NextResponse.json({ lead_id: lead.id, name, email, phone }, { status: 201 })
     } catch (error: any) {
         console.error("Webhook Error:", error)
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
     }
 }
+
