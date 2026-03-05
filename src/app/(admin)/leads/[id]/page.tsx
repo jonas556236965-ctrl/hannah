@@ -3,15 +3,14 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { getProjectIdsForUser } from "@/lib/rls"
 import Link from "next/link"
-import { ArrowLeft, Phone, Calendar as CalendarIcon, FilePenLine } from "lucide-react"
+import { ArrowLeft, Phone, Calendar as CalendarIcon, FilePenLine, Mail, StickyNote, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { updateLeadFields, updateLeadStatus, addLeadNote, logCall, updateContactFields } from "@/app/actions/lead"
+import { updateLeadFields, updateLeadStatus, addLeadNoteAction, logCallAction, updateContactFields } from "@/app/actions/lead"
 import { statusLabel, actionLabel } from "@/lib/utils"
-import { Mail, Phone as PhoneIcon, StickyNote, Loader2 } from "lucide-react"
 import { SubmitButton } from "@/components/ui/submit-button"
 
 export default async function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -71,11 +70,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                 {/* Action Bar */}
                 <div className="flex items-center gap-2">
                     {/* Status Changer */}
-                    <form action={async (formData) => {
-                        "use server"
-                        const st = formData.get("status") as string
-                        if (st) await updateLeadStatus(lead.id, st)
-                    }} className="flex items-center gap-2 mr-4">
+                    <form action={updateLeadStatus.bind(null, lead.id)} className="flex items-center gap-2 mr-4">
                         <select name="status" defaultValue={lead.status} className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                             <option value="NEW">Neu</option>
                             <option value="CONTACTED">Kontaktiert</option>
@@ -83,7 +78,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                             <option value="WON">Gewonnen</option>
                             <option value="LOST">Verloren</option>
                         </select>
-                        <Button type="submit" variant="secondary" size="sm">Status setzen</Button>
+                        <SubmitButton variant="secondary" size="sm">Status setzen</SubmitButton>
                     </form>
 
                     {/* Quick Actions (Call, Note) - handled in the Feed section below or modals, but we can do a prompt here for simplicity */}
@@ -186,19 +181,11 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                     <Card className="shadow-lg border-none">
                         <CardHeader className="pl-6 pb-3 pt-5 border-b border-gray-100 bg-white/50"><CardTitle className="text-sm text-gray-800">Schnellaktionen</CardTitle></CardHeader>
                         <CardContent className="grid grid-cols-2 gap-3 p-6">
-                            <form action={async (formData) => {
-                                "use server"
-                                const summary = formData.get("summary") as string
-                                if (summary) await logCall(lead.id, summary)
-                            }}>
+                            <form action={logCallAction.bind(null, lead.id)}>
                                 <Input name="summary" placeholder="Anruf Kurznotiz..." className="h-8 text-xs mb-2" required />
                                 <SubmitButton size="sm" variant="outline" className="w-full text-xs h-8"><Phone className="w-3 h-3 mr-1" />Anruf loggen</SubmitButton>
                             </form>
-                            <form action={async (formData) => {
-                                "use server"
-                                const note = formData.get("note") as string
-                                if (note) await addLeadNote(lead.id, note)
-                            }}>
+                            <form action={addLeadNoteAction.bind(null, lead.id)}>
                                 <Input name="note" placeholder="Notiztext..." className="h-8 text-xs mb-2" required />
                                 <SubmitButton size="sm" variant="outline" className="w-full text-xs h-8"><FilePenLine className="w-3 h-3 mr-1" />Notiz hinzufügen</SubmitButton>
                             </form>
@@ -218,28 +205,32 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                                     let icon = <div className="h-2 w-2 rounded-full bg-white" />
                                     let displayValue = ""
 
-                                    if (activity.action === "STATUS_CHANGED") {
-                                        badgeColor = "bg-blue-500"
-                                        const val = JSON.parse(activity.newValue || "{}")
-                                        displayValue = `Neuer Status: ${statusLabel(val.status)}`
-                                    } else if (activity.action === "NOTE_ADDED") {
-                                        badgeColor = "bg-green-500"
-                                        const val = JSON.parse(activity.newValue || "{}")
-                                        displayValue = `"${val.note}"`
-                                    } else if (activity.action === "CALL_LOGGED") {
-                                        badgeColor = "bg-purple-500"
-                                        const val = JSON.parse(activity.newValue || "{}")
-                                        displayValue = `Anruf: ${val.summary}`
-                                    } else if (activity.action === "CONTACT_UPDATED") {
-                                        badgeColor = "bg-teal-500"
-                                        const val = JSON.parse(activity.newValue || "{}")
-                                        displayValue = (val.changes as string[])?.join(" · ") || "Kontaktdaten aktualisiert"
-                                    } else if (activity.action === "FIELDS_UPDATED") {
-                                        badgeColor = "bg-orange-500"
-                                        displayValue = "Formulardaten aktualisiert"
-                                    } else if (activity.action === "LEAD_CREATED_API") {
-                                        badgeColor = "bg-gray-500"
-                                        displayValue = "Über Webhook importiert"
+                                    try {
+                                        if (activity.action === "STATUS_CHANGED") {
+                                            badgeColor = "bg-blue-500"
+                                            const val = JSON.parse(activity.newValue || "{}")
+                                            displayValue = `Neuer Status: ${statusLabel(val.status)}`
+                                        } else if (activity.action === "NOTE_ADDED") {
+                                            badgeColor = "bg-green-500"
+                                            const val = JSON.parse(activity.newValue || "{}")
+                                            displayValue = `"${val.note}"`
+                                        } else if (activity.action === "CALL_LOGGED") {
+                                            badgeColor = "bg-purple-500"
+                                            const val = JSON.parse(activity.newValue || "{}")
+                                            displayValue = `Anruf: ${val.summary}`
+                                        } else if (activity.action === "CONTACT_UPDATED") {
+                                            badgeColor = "bg-teal-500"
+                                            const val = JSON.parse(activity.newValue || "{}")
+                                            displayValue = Array.isArray(val.changes) ? val.changes.join(" · ") : "Kontaktdaten aktualisiert"
+                                        } else if (activity.action === "FIELDS_UPDATED") {
+                                            badgeColor = "bg-orange-500"
+                                            displayValue = "Formulardaten aktualisiert"
+                                        } else if (activity.action === "LEAD_CREATED_API") {
+                                            badgeColor = "bg-gray-500"
+                                            displayValue = "Über Webhook importiert"
+                                        }
+                                    } catch (e) {
+                                        displayValue = "Aktivität konnte nicht geladen werden"
                                     }
 
                                     return (

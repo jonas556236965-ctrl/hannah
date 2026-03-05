@@ -23,10 +23,11 @@ async function verifyLeadAccess(leadId: string) {
     return { lead, user: session.user }
 }
 
-export async function updateLeadStatus(leadId: string, newStatus: string) {
+export async function updateLeadStatus(leadId: string, formData: FormData) {
     const { lead, user } = await verifyLeadAccess(leadId)
+    const newStatus = formData.get("status") as string
 
-    if (lead.status === newStatus) return
+    if (!newStatus || lead.status === newStatus) return
 
     await prisma.lead.update({
         where: { id: leadId },
@@ -43,10 +44,13 @@ export async function updateLeadStatus(leadId: string, newStatus: string) {
 
     revalidatePath(`/leads/${leadId}`)
     revalidatePath("/leads")
+    revalidatePath("/dashboard")
 }
 
-export async function addLeadNote(leadId: string, note: string) {
+export async function addLeadNoteAction(leadId: string, formData: FormData) {
     const { user } = await verifyLeadAccess(leadId)
+    const note = formData.get("note") as string
+    if (!note) return
 
     await logLeadAction({
         leadId,
@@ -58,8 +62,10 @@ export async function addLeadNote(leadId: string, note: string) {
     revalidatePath(`/leads/${leadId}`)
 }
 
-export async function logCall(leadId: string, summary: string) {
+export async function logCallAction(leadId: string, formData: FormData) {
     const { user } = await verifyLeadAccess(leadId)
+    const summary = formData.get("summary") as string
+    if (!summary) return
 
     await logLeadAction({
         leadId,
