@@ -141,43 +141,33 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                                     )
                                 })}
 
-                                <div className="pt-4 border-t">
-                                    <Button type="submit" className="w-full">
-                                        <FilePenLine className="w-4 h-4 mr-2" /> Daten Speichern
-                                    </Button>
+                                <div className="space-y-4 pt-6 mt-6 border-t">
+                                    <h3 className="font-semibold text-lg text-foreground">Kontakt & Interne Notizen</h3>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="email" className="font-semibold">E-Mail Adresse</Label>
+                                        <Input id="email" name="email" type="email" placeholder="name@beispiel.de" defaultValue={lead.email ?? ""} />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="phone" className="font-semibold">Telefonnummer</Label>
+                                        <Input id="phone" name="phone" type="tel" placeholder="+49 123 456789" defaultValue={lead.phone ?? ""} />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="notes" className="font-semibold">Interne Notizen</Label>
+                                        <textarea
+                                            id="notes"
+                                            name="notes"
+                                            defaultValue={lead.notes ?? ""}
+                                            placeholder="Notizen für das Team..."
+                                            className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                        />
+                                    </div>
                                 </div>
-                            </form>
-                        </CardContent>
-                    </Card>
 
-                    {/* CONTACT FIELDS: Email, Phone, Notes */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">Kontakt &amp; Notizen</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <form action={updateContactFields.bind(null, lead.id)} className="space-y-4">
-                                <div className="space-y-1">
-                                    <Label htmlFor="email" className="font-semibold">E-Mail Adresse</Label>
-                                    <Input id="email" name="email" type="email" placeholder="name@beispiel.de" defaultValue={lead.email ?? ""} />
+                                <div className="pt-6 mt-6 border-t">
+                                    <SubmitButton className="w-full">
+                                        <FilePenLine className="w-4 h-4 mr-2" /> Alle Daten Speichern
+                                    </SubmitButton>
                                 </div>
-                                <div className="space-y-1">
-                                    <Label htmlFor="phone" className="font-semibold">Telefonnummer</Label>
-                                    <Input id="phone" name="phone" type="tel" placeholder="+49 123 456789" defaultValue={lead.phone ?? ""} />
-                                </div>
-                                <div className="space-y-1">
-                                    <Label htmlFor="notes" className="font-semibold">Interne Notizen</Label>
-                                    <textarea
-                                        id="notes"
-                                        name="notes"
-                                        defaultValue={lead.notes ?? ""}
-                                        placeholder="Notizen für das Team..."
-                                        className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                                    />
-                                </div>
-                                <Button type="submit" variant="secondary" className="w-full">
-                                    Kontaktdaten speichern
-                                </Button>
                             </form>
                         </CardContent>
                     </Card>

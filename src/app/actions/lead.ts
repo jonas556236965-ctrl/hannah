@@ -80,29 +80,59 @@ export async function updateLeadFields(leadId: string, formData: FormData) {
         currentData = JSON.parse(lead.dynamicData)
     } catch (e) { }
 
+    // Extract native fields
+    const newEmail = (formData.get("email") as string)?.trim() || null
+    const newPhone = (formData.get("phone") as string)?.trim() || null
+    const newNotes = (formData.get("notes") as string)?.trim() || null
+
     // Merge new data from form
     const newData = { ...currentData }
     for (const [key, value] of formData.entries()) {
-        if (typeof value === "string" && !key.startsWith("$ACTION_ID_")) { // ignore next internal fields
+        if (key !== "email" && key !== "phone" && key !== "notes" && typeof value === "string" && !key.startsWith("$ACTION_ID_")) { // ignore next internal fields
             newData[key] = value
         }
     }
 
     const newDataString = JSON.stringify(newData)
 
-    if (newDataString !== lead.dynamicData) {
+    const isDynamicDataChanged = newDataString !== lead.dynamicData
+    const isContactChanged = newEmail !== lead.email || newPhone !== lead.phone || newNotes !== lead.notes
+
+    if (isDynamicDataChanged || isContactChanged) {
         await prisma.lead.update({
             where: { id: leadId },
-            data: { dynamicData: newDataString }
+            data: {
+                dynamicData: newDataString,
+                email: newEmail,
+                phone: newPhone,
+                notes: newNotes
+            }
         })
 
-        await logLeadAction({
-            leadId,
-            userId: user.id,
-            action: "FIELDS_UPDATED",
-            oldValue: currentData,
-            newValue: newData
-        })
+        if (isDynamicDataChanged) {
+            await logLeadAction({
+                leadId,
+                userId: user.id,
+                action: "FIELDS_UPDATED",
+                oldValue: currentData,
+                newValue: newData
+            })
+        }
+
+        if (isContactChanged) {
+            const changes: string[] = []
+            if (newEmail !== lead.email) changes.push(`E-Mail: ${lead.email ?? "–"} → ${newEmail ?? "–"}`)
+            if (newPhone !== lead.phone) changes.push(`Telefon: ${lead.phone ?? "–"} → ${newPhone ?? "–"}`)
+            if (newNotes !== lead.notes) changes.push(`Notizen aktualisiert`)
+
+            await logLeadAction({
+                leadId,
+                userId: user.id,
+                action: "CONTACT_UPDATED",
+                oldValue: { email: lead.email, phone: lead.phone },
+                newValue: { email: newEmail, phone: newPhone, changes }
+            })
+        }
     }
 
     revalidatePath(`/leads/${leadId}`)
